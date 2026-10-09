@@ -1,9 +1,11 @@
 #define BAUD 115200UL
 #include <avr/io.h>
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 
-static const char msg[] = "HelloWorld\r\n";
-static const char * volatile tx_ptr = 0 ;
+# define sei()  __asm__ __volatile__ ("sei" ::: "memory")
+#  define __INTR_ATTRS __used__, __externally_visible__
+#define ISR(vector) void vector (void) __attribute__ ((__signal__,__INTR_ATTRS)) ; void vector (void)
+
 
 void uart_init(void) {
     uint16_t ubrr = (F_CPU / (8UL * BAUD)) - 1;   // U2X mode
@@ -32,7 +34,7 @@ void uart_printstr(const char* str) {
 		uart_tx(*str++);
 }
 
-ISR(TIMER1_COMPA_vect) {				// runs every 2s, by itself
+ISR(__vector_11) {				// runs every 2s, by itself
 	uart_printstr("Hello World!\r\n");
 }
 
