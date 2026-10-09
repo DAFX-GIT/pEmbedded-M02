@@ -1,6 +1,10 @@
 #define BAUD 115200UL
 #include <avr/io.h>
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
+
+#define sei()  __asm__ __volatile__ ("sei" ::: "memory")
+#define __INTR_ATTRS __used__, __externally_visible__
+#define ISR(vector) void vector (void) __attribute__ ((__signal__,__INTR_ATTRS)) ; void vector (void)
 
 void uart_init(void) {
     uint16_t ubrr = (F_CPU / (8UL * BAUD)) - 1;   // U2X mode
@@ -21,7 +25,7 @@ char uart_rx(void) {
     return UDR0;
 }
 
-ISR(USART_RX_vect) {                      // fires when a byte arrives
+ISR(__vector_18) {                      // fires when a byte arrives. vector18 = USART_RX_vect
     char c = uart_rx();
 	if (c >= 65 && c <=90) { 
 		c+= 32;

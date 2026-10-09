@@ -2,8 +2,8 @@
 #include <avr/io.h>
 //#include <avr/interrupt.h>
 
-# define sei()  __asm__ __volatile__ ("sei" ::: "memory")
-#  define __INTR_ATTRS __used__, __externally_visible__
+#define sei()  __asm__ __volatile__ ("sei" ::: "memory")
+#define __INTR_ATTRS __used__, __externally_visible__
 #define ISR(vector) void vector (void) __attribute__ ((__signal__,__INTR_ATTRS)) ; void vector (void)
 
 
